@@ -4,7 +4,9 @@ console.log("process.env", process.env.NEXT_PUBLIC_API_URL);
 const getToken = () => {
   try {
     const raw = localStorage.getItem("pos-auth");
+    console.log("RAW -> ", raw);
     if (!raw) return null;
+    console.log("TOKEN -> ", JSON.parse(raw)?.state?.token ?? null);
     return JSON.parse(raw)?.state?.token ?? null;
   } catch { return null; }
 };
