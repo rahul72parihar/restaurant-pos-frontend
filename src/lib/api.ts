@@ -12,7 +12,7 @@ const getToken = () => {
 };
 
 const request = async (method: string, path: string, body?: unknown) => {
-  const token = getToken();
+  const token = await getToken();
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers: {
