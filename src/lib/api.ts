@@ -1,5 +1,6 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-
+console.log("process.env", process.env);
+console.log("process.env", process.env.NEXT_PUBLIC_API_URL);
 const getToken = () => {
   try {
     const raw = localStorage.getItem("pos-auth");
