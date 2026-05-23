@@ -14,6 +14,7 @@ const allLinks = [
   { href: "/dashboard/pos",       label: "POS / Billing",icon: ShoppingCart,   roles: ["ADMIN","MANAGER","CASHIER"] },
   { href: "/dashboard/tables",    label: "Tables",      icon: Grid2X2,         roles: ["ADMIN","MANAGER","WAITER","CASHIER"] },
   { href: "/dashboard/kitchen",   label: "Kitchen",     icon: UtensilsCrossed, roles: ["ADMIN","MANAGER","KITCHEN_STAFF"] },
+  { href: "/dashboard/orders",    label: "Orders",      icon: ShoppingCart,    roles: ["ADMIN","MANAGER","CASHIER"] },
   { href: "/dashboard/menu",      label: "Menu",        icon: BookOpen,        roles: ["ADMIN","MANAGER"] },
   { href: "/dashboard/inventory", label: "Inventory",   icon: Package,         roles: ["ADMIN","MANAGER"] },
   { href: "/dashboard/customers", label: "Customers",   icon: Users,           roles: ["ADMIN","MANAGER","CASHIER"] },
@@ -21,7 +22,6 @@ const allLinks = [
   { href: "/dashboard/coupons",   label: "Coupons",     icon: Tag,             roles: ["ADMIN","MANAGER"] },
   { href: "/dashboard/outlets",   label: "Outlets",     icon: Store,           roles: ["ADMIN"] },
   { href: "/dashboard/settings",  label: "Settings",    icon: Settings,        roles: ["ADMIN","MANAGER"] },
-  { href: "/dashboard/orders",    label: "Orders",      icon: ShoppingCart,    roles: ["ADMIN","MANAGER","CASHIER"] },
 ];
 
 export default function Sidebar() {
