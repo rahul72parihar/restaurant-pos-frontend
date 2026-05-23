@@ -21,6 +21,7 @@ const allLinks = [
   { href: "/dashboard/coupons",   label: "Coupons",     icon: Tag,             roles: ["ADMIN","MANAGER"] },
   { href: "/dashboard/outlets",   label: "Outlets",     icon: Store,           roles: ["ADMIN"] },
   { href: "/dashboard/settings",  label: "Settings",    icon: Settings,        roles: ["ADMIN","MANAGER"] },
+  { href: "/dashboard/orders",    label: "Orders",      icon: ShoppingCart,    roles: ["ADMIN","MANAGER","CASHIER"] },
 ];
 
 export default function Sidebar() {
