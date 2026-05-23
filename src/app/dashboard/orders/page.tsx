@@ -7,8 +7,15 @@ import { useAuthStore } from "@/store/authStore";
 import { formatCurrency } from "@/lib/utils";
 import { CheckCircle2, Clock, AlertCircle, ShieldAlert } from "lucide-react";
 
-
-type OrderStatus = "PENDING" | "CONFIRMED" | "READY" | "SERVED" | "BILLED" | "PAID" | "CANCELLED" | string;
+type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "READY"
+  | "SERVED"
+  | "BILLED"
+  | "PAID"
+  | "CANCELLED"
+  | string;
 
 type OrderRow = {
   id: string;
@@ -35,7 +42,8 @@ export default function OrdersPage() {
   useEffect(() => {
     // Role guard (frontend)
     const role = user?.role;
-    const allowed = role === "ADMIN" || role === "MANAGER" || role === "CASHIER";
+    const allowed =
+      role === "ADMIN" || role === "MANAGER" || role === "CASHIER";
     if (role && !allowed) router.replace("/dashboard");
   }, [router, user?.role]);
 
@@ -55,7 +63,9 @@ export default function OrdersPage() {
         // Non-paid: fetch all, then filter out PAID client-side
         const res = await api.get(`/orders?page=1&limit=50`);
         if (!cancelled) {
-          setOrders((res.orders || []).filter((o: OrderRow) => o.status !== "PAID"));
+          setOrders(
+            (res.orders || []).filter((o: OrderRow) => o.status !== "PAID"),
+          );
         }
       } catch (e: any) {
         if (!cancelled) setError(e?.message || "Failed to load orders");
@@ -97,8 +107,12 @@ export default function OrdersPage() {
     <div className="max-w-6xl space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Orders</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">View unpaid and paid orders</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Orders
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            View unpaid and paid orders
+          </p>
         </div>
 
         <div className="flex gap-2">
@@ -116,7 +130,9 @@ export default function OrdersPage() {
 
       <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-6 text-sm text-gray-500 dark:text-gray-400">Loading...</div>
+          <div className="p-6 text-sm text-gray-500 dark:text-gray-400">
+            Loading...
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
@@ -132,17 +148,25 @@ export default function OrdersPage() {
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                    <td
+                      colSpan={5}
+                      className="px-4 py-8 text-center text-gray-400"
+                    >
                       No orders found.
                     </td>
                   </tr>
                 ) : (
                   orders.map((o) => (
-                    <tr key={o.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/30">
+                    <tr
+                      key={o.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-900/30"
+                    >
                       <td className="px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-200">
                         {o.orderNumber}
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-200 capitalize">{o.type}</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-200 capitalize">
+                        {o.type}
+                      </td>
                       <td className="px-4 py-3 text-gray-700 dark:text-gray-200">
                         {o.table?.name ? o.table.name : o.customer?.name || "—"}
                       </td>
@@ -165,61 +189,93 @@ export default function OrdersPage() {
                             {o.status}
                           </span>
 
-                          {user?.role === "MANAGER" && (o.status === "SERVED" || o.status === "BILLED") && (
-                            <div className="flex gap-2">
-                              {o.status === "SERVED" && (
-                                <button
-                                  onClick={async () => {
-                                    try {
-                                      await api.patch(`/orders/${o.id}/status`, { status: "BILLED" });
-                                      const res = await api.get(`/orders?status=PAID&page=1&limit=50`);
-                                      // re-fetch current tab
-                                      if (tab === "paid") setOrders(res.orders || []);
-                                      else {
-                                        const cur = await api.get(`/orders?page=1&limit=50`);
-                                        setOrders((cur.orders || []).filter((x: OrderRow) => x.status !== "PAID"));
+                          {(user?.role === "MANAGER"||"ADMIN"||"CASHIER") &&
+                            (o.status === "SERVED" ||
+                              o.status === "BILLED") && (
+                              <div className="flex gap-2">
+                                {o.status === "SERVED" && (
+                                  <button
+                                    onClick={async () => {
+                                      try {
+                                        await api.patch(
+                                          `/orders/${o.id}/status`,
+                                          { status: "BILLED" },
+                                        );
+                                        const res = await api.get(
+                                          `/orders?status=PAID&page=1&limit=50`,
+                                        );
+                                        // re-fetch current tab
+                                        if (tab === "paid")
+                                          setOrders(res.orders || []);
+                                        else {
+                                          const cur = await api.get(
+                                            `/orders?page=1&limit=50`,
+                                          );
+                                          setOrders(
+                                            (cur.orders || []).filter(
+                                              (x: OrderRow) =>
+                                                x.status !== "PAID",
+                                            ),
+                                          );
+                                        }
+                                      } catch (e: any) {
+                                        setError(
+                                          e?.message ||
+                                            "Failed to update status",
+                                        );
                                       }
-                                    } catch (e: any) {
-                                      setError(e?.message || "Failed to update status");
-                                    }
-                                  }}
-                                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700"
-                                >
-                                  Bill
-                                </button>
-                              )}
+                                    }}
+                                    className="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700"
+                                  >
+                                    Bill
+                                  </button>
+                                )}
 
-                              {o.status === "BILLED" && (
-                                <button
-                                  onClick={async () => {
-                                    try {
-                                      await api.patch(`/orders/${o.id}/status`, { status: "PAID" });
-                                      if (tab === "paid") {
-                                        const res = await api.get(`/orders?status=PAID&page=1&limit=50`);
-                                        setOrders(res.orders || []);
-                                      } else {
-                                        const cur = await api.get(`/orders?page=1&limit=50`);
-                                        setOrders((cur.orders || []).filter((x: OrderRow) => x.status !== "PAID"));
+                                {o.status === "BILLED" && (
+                                  <button
+                                    onClick={async () => {
+                                      try {
+                                        await api.patch(
+                                          `/orders/${o.id}/status`,
+                                          { status: "PAID" },
+                                        );
+                                        if (tab === "paid") {
+                                          const res = await api.get(
+                                            `/orders?status=PAID&page=1&limit=50`,
+                                          );
+                                          setOrders(res.orders || []);
+                                        } else {
+                                          const cur = await api.get(
+                                            `/orders?page=1&limit=50`,
+                                          );
+                                          setOrders(
+                                            (cur.orders || []).filter(
+                                              (x: OrderRow) =>
+                                                x.status !== "PAID",
+                                            ),
+                                          );
+                                        }
+                                      } catch (e: any) {
+                                        setError(
+                                          e?.message ||
+                                            "Failed to update status",
+                                        );
                                       }
-                                    } catch (e: any) {
-                                      setError(e?.message || "Failed to update status");
-                                    }
-                                  }}
-                                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700"
-                                >
-                                  Mark Paid
-                                </button>
-                              )}
+                                    }}
+                                    className="px-3 py-1 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700"
+                                  >
+                                    Mark Paid
+                                  </button>
+                                )}
 
-                              <span className="inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
-                                <ShieldAlert className="w-3.5 h-3.5" />
-                                Manager
-                              </span>
-                            </div>
-                          )}
+                                <span className="inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
+                                  <ShieldAlert className="w-3.5 h-3.5" />
+                                  Manager
+                                </span>
+                              </div>
+                            )}
                         </div>
                       </td>
-
                     </tr>
                   ))
                 )}
@@ -231,4 +287,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-

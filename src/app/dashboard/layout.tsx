@@ -10,7 +10,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Zustand persist rehydrates auth state async on client.
   // Gate redirects until hydration finishes to avoid refresh -> login loop.
   const { isAuthenticated, token } = useAuthStore();
-  const hasHydrated = useAuthStore.persist.hasHydrated();
+  const hasHydrated = typeof window !== "undefined" && useAuthStore.persist.hasHydrated();
+
 
   const router = useRouter();
   useSocket(); // init socket connection
